@@ -16,25 +16,25 @@ open class PFStepper: UIControl {
             let isInteger = floor(value) == value
             
             if showIntegerIfDoubleIsInteger && isInteger {
-                topButton.setTitle(String(stringInterpolationSegment: Int(value)), for: UIControlState())
-                bottomButton.setTitle(String(stringInterpolationSegment: Int(value + stepValue)), for: UIControlState())
+                topButton.setTitle(String(Int(value)), for: UIControl.State())
+                bottomButton.setTitle(String(Int(value + stepValue)), for: UIControl.State())
             } else {
-                topButton.setTitle(String(stringInterpolationSegment: value), for: UIControlState())
-                bottomButton.setTitle(String(stringInterpolationSegment: value + stepValue), for: UIControlState())
+                topButton.setTitle(String(value), for: UIControl.State())
+                bottomButton.setTitle(String(value + stepValue), for: UIControl.State())
             }
             
             if oldValue != value {
                 sendActions(for: .valueChanged)
             }
             if value <= minimumValue {
-                topButton.setTitle("", for: UIControlState())
+                topButton.setTitle("", for: UIControl.State())
                 topButton.backgroundColor = UIColor.white
             } else {
                 topButton.backgroundColor = UIColor(red: 238/255.0, green: 238/255.0, blue: 238/255.0, alpha: 1)
                 topButton.alpha = 0.5
             }
             if value >= maximumValue {
-                bottomButton.setTitle("", for: UIControlState())
+                bottomButton.setTitle("", for: UIControl.State())
             } else {
             }
         }
@@ -51,27 +51,27 @@ open class PFStepper: UIControl {
     open var buttonsFont = UIFont(name: "AvenirNext-Bold", size: 20.0)!
     lazy var topButton: UIButton = {
         let button = UIButton()
-        button.setTitle(self.topButtonText, for: UIControlState())
-        button.setTitleColor(self.buttonsTextColor, for: UIControlState())
+        button.setTitle(self.topButtonText, for: UIControl.State())
+        button.setTitleColor(self.buttonsTextColor, for: UIControl.State())
         button.backgroundColor = self.buttonsBackgroundColor
         button.titleLabel?.font = self.buttonsFont
 //        button.contentHorizontalAlignment = .Left
 //        button.contentVerticalAlignment = .Top
 //        button.titleEdgeInsets = UIEdgeInsetsMake(10.0, 10.0, 0.0, 0.0)
         button.addTarget(self, action: #selector(PFStepper.topButtonTouchDown(_:)), for: .touchDown)
-        button.addTarget(self, action: #selector(PFStepper.buttonTouchUp(_:)), for: UIControlEvents.touchUpInside)
-        button.addTarget(self, action: #selector(PFStepper.buttonTouchUp(_:)), for: UIControlEvents.touchUpOutside)
+        button.addTarget(self, action: #selector(PFStepper.buttonTouchUp(_:)), for: UIControl.Event.touchUpInside)
+        button.addTarget(self, action: #selector(PFStepper.buttonTouchUp(_:)), for: UIControl.Event.touchUpOutside)
         return button
     }()
     lazy var bottomButton: UIButton = {
         let button = UIButton()
-        button.setTitle(self.bottomButtonText, for: UIControlState())
-        button.setTitleColor(self.buttonsTextColor, for: UIControlState())
+        button.setTitle(self.bottomButtonText, for: UIControl.State())
+        button.setTitleColor(self.buttonsTextColor, for: UIControl.State())
         button.backgroundColor = self.buttonsBackgroundColor
         button.titleLabel?.font = self.buttonsFont
         button.addTarget(self, action: #selector(PFStepper.bottomButtonTouchDown(_:)), for: .touchDown)
-        button.addTarget(self, action: #selector(PFStepper.buttonTouchUp(_:)), for: UIControlEvents.touchUpInside)
-        button.addTarget(self, action: #selector(PFStepper.buttonTouchUp(_:)), for: UIControlEvents.touchUpOutside)
+        button.addTarget(self, action: #selector(PFStepper.buttonTouchUp(_:)), for: UIControl.Event.touchUpInside)
+        button.addTarget(self, action: #selector(PFStepper.buttonTouchUp(_:)), for: UIControl.Event.touchUpOutside)
         return button
     }()
     
@@ -128,7 +128,7 @@ open class PFStepper: UIControl {
         addSubview(bottomButton)
         
         backgroundColor = buttonsBackgroundColor
-        NotificationCenter.default.addObserver(self, selector: #selector(PFStepper.reset), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PFStepper.reset), name: UIApplication.willResignActiveNotification, object: nil)
     }
     
     open override func layoutSubviews() {
@@ -154,7 +154,7 @@ open class PFStepper: UIControl {
 
 // MARK: - Button Events
 extension PFStepper {
-    func reset() {
+    @objc func reset() {
         stepperState = .stable
         resetTimer()
         
@@ -162,37 +162,37 @@ extension PFStepper {
         bottomButton.isEnabled = true
     }
     
-    func topButtonTouchDown(_ button: UIButton) {
+    @objc func topButtonTouchDown(_ button: UIButton) {
         bottomButton.isEnabled = false
         resetTimer()
         
         if value == minimumValue {
-            button.setTitle("", for: UIControlState())
+            button.setTitle("", for: UIControl.State())
         } else {
             stepperState = .shouldDecrease
         }
         
     }
     
-    func bottomButtonTouchDown(_ button: UIButton) {
+    @objc func bottomButtonTouchDown(_ button: UIButton) {
         topButton.isEnabled = false
         resetTimer()
         
         if value == maximumValue {
-            button.setTitle("", for: UIControlState())
+            button.setTitle("", for: UIControl.State())
         } else {
             stepperState = .shouldIncrease
         }
     }
     
-    func buttonTouchUp(_ button: UIButton) {
+    @objc func buttonTouchUp(_ button: UIButton) {
         reset()
     }
 }
 
 // MARK: - Timer
 extension PFStepper {
-    func handleTimerFire(_ timer: Timer) {
+    @objc func handleTimerFire(_ timer: Timer) {
         timerFireCount += 1
         
         if timerFireCount % timerFireCountModulo == 0 {

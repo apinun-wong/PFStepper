@@ -5,6 +5,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/PFStepper.svg?style=flat)](http://cocoapods.org/pods/PFStepper)
 
 It may be the most elegant stepper you have ever had!
+I fixed it to support swift5.0
 
 ![Sample](Sample.gif)
 
